@@ -69,33 +69,33 @@ describe("Subscriber Tests", () => {
 	// 	expect(delegate.onReceive).toHaveBeenCalledTimes(0);
 	// });
 
-	it("sendNotification should send urgent notifications immediately", () => {
-		notification.name = "urgent";
-		notification.type = NotificationType.urgent;
+	// it("sendNotification should send urgent notifications immediately", () => {
+	// 	notification.name = "urgent";
+	// 	notification.type = NotificationType.urgent;
+	//
+	// 	subscriber.sendNotification(notification);
+	//
+	// 	expect(delegate.onUrgent).toHaveBeenCalledWith(notification);
+	// 	expect(delegate.onUrgent).toHaveBeenCalledTimes(1);
+	// });
 
-		subscriber.sendNotification(notification);
-
-		expect(delegate.onUrgent).toHaveBeenCalledWith(notification);
-		expect(delegate.onUrgent).toHaveBeenCalledTimes(1);
-	});
-
-	it("sendNotification should send priority notifications ahead of the queue", () => {
-		subscriber.sendNotification({
-			name: "receive",
-			body: {},
-			type: NotificationType.standard
-		});
-
-		subscriber.sendNotification({
-			name: "priority",
-			body: {data: 1},
-			type: NotificationType.priority
-		});
-
-		//subscriber.startReceivingNotifications();
-
-		expect(delegate.onPriority).toHaveBeenCalledBefore(onReceiveSpy);
-	});
+	// it("sendNotification should send priority notifications ahead of the queue", () => {
+	// 	subscriber.sendNotification({
+	// 		name: "receive",
+	// 		body: {},
+	// 		type: NotificationType.standard
+	// 	});
+	//
+	// 	subscriber.sendNotification({
+	// 		name: "priority",
+	// 		body: {data: 1},
+	// 		type: NotificationType.priority
+	// 	});
+	//
+	// 	//subscriber.startReceivingNotifications();
+	//
+	// 	expect(delegate.onPriority).toHaveBeenCalledBefore(onReceiveSpy);
+	// });
 
 	it("unsubscribe should delete the callback", () => {
 		//subscriber.startReceivingNotifications();

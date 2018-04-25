@@ -3,45 +3,18 @@ import {NotificationType} from "./NotificationType";
 import {Subscriber} from "./Subscriber";
 
 export class Notifier {
-	private subscribers: Subscriber[] = [];
+	private subscribers: Map<string, Subscriber> = new Map();
 
 	public add(subscriber: Subscriber): void {
-		this.subscribers.unshift(subscriber);
+		this.subscribers.set(subscriber.getKey(), subscriber);
 	}
 
-	public remove(key: string): Subscriber | undefined {
-		// let subscriber: Subscriber | undefined;
-		// let i = this.subscribers.length;
-        //
-		// while (i--) {
-		// 	if (this.subscribers[i].getKey() === key) {
-		// 		subscriber = this.subscribers[i];
-		// 		this.subscribers.splice(i, 1);
-		// 		break;
-		// 	}
-		// }
-        //
-		// return subscriber;
-		return this.getSubscriberSpliceIfTrue(key, true);
+	public delete(key: string): boolean {
+		return this.subscribers.delete(key);
 	}
 
 	public get(key: string): Subscriber | undefined {
-		// let subscriber: Subscriber | undefined;
-		// let i = this.subscribers.length;
-        //
-		// while (i--) {
-		// 	if (this.subscribers[i].getKey() === key) {
-		// 		subscriber = this.subscribers[i];
-		// 		break;
-		// 	}
-		// }
-        //
-		// return subscriber;
-		return this.getSubscriberSpliceIfTrue(key, false);
-	}
-
-	public getSubscriberCount(): number {
-		return this.subscribers.length;
+		return this.subscribers.get(key);
 	}
 
 	public notify(eventName: string, eventData: any): void {
@@ -52,38 +25,13 @@ export class Notifier {
 		this.sendNotification(eventName, eventData, NotificationType.priority);
 	}
 
-	public notifyUrgent(eventName: string, eventData: any): void {
-		this.sendNotification(eventName, eventData, NotificationType.urgent);
-	}
-
-	private sendNotification(eventName: string, eventData: any, eventType: NotificationType): void {
-		let i = this.subscribers.length;
-
-		while (i--) {
-			this.subscribers[i].sendNotification({
-				name: eventName,
-				body: eventData,
-				type: eventType
+	private sendNotification(name: string, data: any, type: NotificationType): void {
+		this.subscribers.forEach(subscriber => {
+			subscriber.sendNotification({
+				name: name,
+				body: data,
+				type: type
 			});
-		}
-	}
-
-	private getSubscriberSpliceIfTrue(key: string, remove: boolean): Subscriber | undefined {
-		let subscriber: Subscriber | undefined;
-		let i = this.subscribers.length;
-
-		while (i--) {
-			if (this.subscribers[i].getKey() === key) {
-				subscriber = this.subscribers[i];
-
-				if (remove) {
-					this.subscribers.splice(i, 1);
-				}
-
-				break;
-			}
-		}
-
-		return subscriber;
+		});
 	}
 }

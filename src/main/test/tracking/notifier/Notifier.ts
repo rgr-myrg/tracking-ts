@@ -12,11 +12,11 @@ describe("Notifier Tests", () => {
 		subscriberSpy = spyOn(subscriber, "sendNotification").and.callThrough();
 	});
 
-	it("addReceiver should register a Receiver", () => {
-		notifier.add(subscriber);
-
-		expect(notifier.getSubscriberCount()).toEqual(1);
-	});
+	// it("addReceiver should register a Receiver", () => {
+	// 	notifier.add(subscriber);
+	//
+	// 	expect(notifier.getSubscriberCount()).toEqual(1);
+	// });
 
 	it("getReceiver should return the Receiver", () => {
 		notifier.add(subscriber);
@@ -29,10 +29,9 @@ describe("Notifier Tests", () => {
 	it("removeReceiver should remove the Receiver", () => {
 		notifier.add(subscriber);
 
-		let removed: Subscriber | undefined = notifier.remove("SubscriberKey");
+		let removed: boolean = notifier.delete("SubscriberKey");
 
-		expect(notifier.getSubscriberCount()).toEqual(0);
-		expect(removed).toEqual(subscriber);
+		expect(removed).toEqual(true);
 	});
 
 	it("notify should send the notification", () => {
@@ -49,15 +48,15 @@ describe("Notifier Tests", () => {
 		expect(subscriber.sendNotification).toHaveBeenCalledTimes(1);
 	});
 
-	it("notifyUrgent should send the urgent notification", () => {
-		/* mock callback */
-		subscriber.notificationInterest.subscribe([
-			{on: "send", callback: () => {}}
-		]);
-
-		notifier.add(subscriber);
-		notifier.notifyUrgent("send", {data: "test"});
-
-		expect(subscriber.sendNotification).toHaveBeenCalledTimes(1);
-	});
+	// it("notifyUrgent should send the urgent notification", () => {
+	// 	/* mock callback */
+	// 	subscriber.notificationInterest.subscribe([
+	// 		{on: "send", callback: () => {}}
+	// 	]);
+	//
+	// 	notifier.add(subscriber);
+	// 	notifier.notifyUrgent("send", {data: "test"});
+	//
+	// 	expect(subscriber.sendNotification).toHaveBeenCalledTimes(1);
+	// });
 });

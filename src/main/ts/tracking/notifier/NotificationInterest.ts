@@ -10,8 +10,6 @@ export class NotificationInterest {
 	}
 
 	public subscribe(list: Interests[]):void {
-		let i: number = list.length;
-
 		for (let item of list) {
 			this.interests.set(item.on, item.callback);
 		}
