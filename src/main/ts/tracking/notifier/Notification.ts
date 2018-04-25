@@ -1,4 +1,4 @@
-import {NotificationType} from "../notifier/NotificationType";
+import {NotificationType} from "./NotificationType";
 
 export interface Notification {
 	name: string;

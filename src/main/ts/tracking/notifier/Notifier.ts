@@ -3,43 +3,45 @@ import {NotificationType} from "./NotificationType";
 import {Subscriber} from "./Subscriber";
 
 export class Notifier {
-	private receivers: Subscriber[] = [];
+	private subscribers: Subscriber[] = [];
 
-	public addReceiver(receiver: Subscriber): void {
-		this.receivers.unshift(receiver);
+	public add(subscriber: Subscriber): void {
+		this.subscribers.unshift(subscriber);
 	}
 
-	public removeReceiver(key: string): Subscriber | undefined {
-		let receiver: Subscriber | undefined;
-		let i = this.receivers.length;
-
-		while (i--) {
-			if (this.receivers[i].getKey() === key) {
-				receiver = this.receivers[i];
-				this.receivers.splice(i, 1);
-				break;
-			}
-		}
-
-		return receiver;
+	public remove(key: string): Subscriber | undefined {
+		// let subscriber: Subscriber | undefined;
+		// let i = this.subscribers.length;
+        //
+		// while (i--) {
+		// 	if (this.subscribers[i].getKey() === key) {
+		// 		subscriber = this.subscribers[i];
+		// 		this.subscribers.splice(i, 1);
+		// 		break;
+		// 	}
+		// }
+        //
+		// return subscriber;
+		return this.getSubscriberSpliceIfTrue(key, true);
 	}
 
-	public getReceiver(key: string): Subscriber | undefined {
-		let receiver: Subscriber | undefined;
-		let i = this.receivers.length;
-
-		while (i--) {
-			if (this.receivers[i].getKey() === key) {
-				receiver = this.receivers[i];
-				break;
-			}
-		}
-
-		return receiver;
+	public get(key: string): Subscriber | undefined {
+		// let subscriber: Subscriber | undefined;
+		// let i = this.subscribers.length;
+        //
+		// while (i--) {
+		// 	if (this.subscribers[i].getKey() === key) {
+		// 		subscriber = this.subscribers[i];
+		// 		break;
+		// 	}
+		// }
+        //
+		// return subscriber;
+		return this.getSubscriberSpliceIfTrue(key, false);
 	}
 
-	public getReceiverCount(): number {
-		return this.receivers.length;
+	public getSubscriberCount(): number {
+		return this.subscribers.length;
 	}
 
 	public notify(eventName: string, eventData: any): void {
@@ -55,14 +57,33 @@ export class Notifier {
 	}
 
 	private sendNotification(eventName: string, eventData: any, eventType: NotificationType): void {
-		let i = this.receivers.length;
+		let i = this.subscribers.length;
 
 		while (i--) {
-			this.receivers[i].sendNotification({
+			this.subscribers[i].sendNotification({
 				name: eventName,
 				body: eventData,
 				type: eventType
 			});
 		}
+	}
+
+	private getSubscriberSpliceIfTrue(key: string, remove: boolean): Subscriber | undefined {
+		let subscriber: Subscriber | undefined;
+		let i = this.subscribers.length;
+
+		while (i--) {
+			if (this.subscribers[i].getKey() === key) {
+				subscriber = this.subscribers[i];
+
+				if (remove) {
+					this.subscribers.splice(i, 1);
+				}
+
+				break;
+			}
+		}
+
+		return subscriber;
 	}
 }

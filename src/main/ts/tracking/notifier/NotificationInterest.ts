@@ -1,5 +1,13 @@
+import {Subscriber} from "./Subscriber";
+import {Notification} from "./Notification";
+
 export class NotificationInterest {
 	private interests: Map<string, Function> = new Map();
+	private subscriber: Subscriber;
+
+	constructor(subscriber: Subscriber) {
+		this.subscriber = subscriber;
+	}
 
 	public subscribe(list: Interests[]):void {
 		let i: number = list.length;
@@ -13,8 +21,16 @@ export class NotificationInterest {
 		this.interests.delete(eventName);
 	}
 
-	public post(eventName: string):Function {
-		return <Function> this.interests.get(eventName);
+	public post(notification: Notification): void {
+		if (!this.has(notification.name)) {
+			return;
+		}
+
+		let callback: Function = <Function> this.interests.get(notification.name);
+
+		if (callback) {
+			callback.call(this.subscriber, notification);
+		}
 	}
 
 	public has(eventName: string): boolean {

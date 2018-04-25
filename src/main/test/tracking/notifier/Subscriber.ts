@@ -2,12 +2,12 @@ import {Subscriber} from "../../../ts/tracking/notifier/Subscriber";
 import {Notification} from "../../../ts/tracking/notifier/Notification";
 import {NotificationType} from "../../../ts/tracking/notifier/NotificationType";
 
-describe("Receiver Tests", () => {
+describe("Subscriber Tests", () => {
 	let onReceiveSpy: any;
 	let onPrioritySpy: any;
 	let onUrgentSpy: any;
 	let notification: Notification;
-	let receiver: MockReceiver;
+	let subscriber: MockSubscriber;
 
 	let delegate = {
 		onReceive: function(notification: Notification) {},
@@ -15,12 +15,12 @@ describe("Receiver Tests", () => {
 		onUrgent: function(notification: Notification) {}
 	};
 
-	class MockReceiver extends Subscriber {
-		public static NAME: string = "MockReceiver";
+	class MockSubscriber extends Subscriber {
+		public static NAME: string = "MockSubscriber";
 		constructor() {
-			super(MockReceiver.NAME);
+			super(MockSubscriber.NAME);
 
-			this.notification.subscribe([
+			this.notificationInterest.subscribe([
 				{on: "receive", callback: this.onReceive},
 				{on: "priority", callback: this.onPriority},
 				{on: "urgent", callback: this.onUrgent}
@@ -38,7 +38,7 @@ describe("Receiver Tests", () => {
 	}
 
 	beforeEach(() => {
-		receiver = new MockReceiver();
+		subscriber = new MockSubscriber();
 
 		notification = {
 			name: "receive",
@@ -51,81 +51,81 @@ describe("Receiver Tests", () => {
 		onUrgentSpy   = spyOn(delegate, "onUrgent").and.callThrough();
 	});
 
-	it("startReceivingNotifications should enable receiving notifications", () => {
-		receiver.startReceivingNotifications();
+	// it("startReceivingNotifications should enable receiving notifications", () => {
+	// 	subscriber.startReceivingNotifications();
+    //
+	// 	for (let i = 0; i < 5; i++) {
+	// 		subscriber.sendNotification(notification);
+	// 	}
+    //
+	// 	expect(delegate.onReceive).toHaveBeenCalledTimes(5);
+	// 	expect(delegate.onReceive).toHaveBeenCalledWith(notification);
+	// });
 
-		for (let i = 0; i < 5; i++) {
-			receiver.sendNotification(notification);
-		}
-
-		expect(delegate.onReceive).toHaveBeenCalledTimes(5);
-		expect(delegate.onReceive).toHaveBeenCalledWith(notification);
-	});
-
-	it("pauseReceivingNotifications should disable receiving notifications", () => {
-		receiver.pauseReceivingNotifications();
-		receiver.sendNotification(notification);
-
-		expect(delegate.onReceive).toHaveBeenCalledTimes(0);
-	});
+	// it("pauseReceivingNotifications should disable receiving notifications", () => {
+	// 	subscriber.pauseReceivingNotifications();
+	// 	subscriber.sendNotification(notification);
+    //
+	// 	expect(delegate.onReceive).toHaveBeenCalledTimes(0);
+	// });
 
 	it("sendNotification should send urgent notifications immediately", () => {
 		notification.name = "urgent";
 		notification.type = NotificationType.urgent;
 
-		receiver.sendNotification(notification);
+		subscriber.sendNotification(notification);
 
 		expect(delegate.onUrgent).toHaveBeenCalledWith(notification);
 		expect(delegate.onUrgent).toHaveBeenCalledTimes(1);
 	});
 
 	it("sendNotification should send priority notifications ahead of the queue", () => {
-		receiver.sendNotification({
+		subscriber.sendNotification({
 			name: "receive",
 			body: {},
 			type: NotificationType.standard
 		});
 
-		receiver.sendNotification({
+		subscriber.sendNotification({
 			name: "priority",
 			body: {data: 1},
 			type: NotificationType.priority
 		});
 
-		receiver.startReceivingNotifications();
+		//subscriber.startReceivingNotifications();
 
 		expect(delegate.onPriority).toHaveBeenCalledBefore(onReceiveSpy);
 	});
 
 	it("unsubscribe should delete the callback", () => {
-		receiver.startReceivingNotifications();
+		//subscriber.startReceivingNotifications();
 
-		receiver.notification.unsubscribe("receive");
-		receiver.sendNotification({
+		subscriber.notificationInterest.unsubscribe("receive");
+		subscriber.sendNotification({
 			name: "receive",
 			body: {},
 			type: NotificationType.standard
 		});
 
-		expect(receiver.notification.has("receive")).toBe(false);
+		expect(subscriber.notificationInterest.has("receive")).toBe(false);
 		expect(delegate.onReceive).toHaveBeenCalledTimes(0);
 	});
 
 	it("subscribe should add the callback", () => {
-		receiver.startReceivingNotifications();
+		//subscriber.startReceivingNotifications();
 
-		receiver.notification.subscribe([{on: "receive", callback: receiver.onReceive}]);
-		receiver.sendNotification({
+		subscriber.notificationInterest.subscribe([{on: "receive", callback: subscriber.onReceive}]);
+		subscriber.sendNotification({
 			name: "receive",
 			body: {},
 			type: NotificationType.standard
 		});
 
-		expect(receiver.notification.has("receive")).toBe(true);
+		expect(subscriber.notificationInterest.has("receive")).toBe(true);
 		expect(delegate.onReceive).toHaveBeenCalledTimes(1);
 	});
 
-	it("getKey should return the receiver's key", () => {
-		expect(receiver.getKey()).toEqual(MockReceiver.NAME);
+	it("getKey should return the subscriber's key", () => {
+		expect(subscriber.getKey()).toEqual(MockSubscriber.NAME);
 	});
 });

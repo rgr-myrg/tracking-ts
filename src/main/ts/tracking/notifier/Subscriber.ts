@@ -3,38 +3,32 @@ import {NotificationType} from "./NotificationType";
 import {NotificationInterest} from "./NotificationInterest";
 
 export class Subscriber {
-	private standard: Notification[] = [];
-	private priority: Notification[] = [];
-	private shouldPostNotifications: boolean = false;
-	private key: string | undefined;
+	// private standard: Notification[] = [];
+	// private priority: Notification[] = [];
+	private notifications: Notification[] = [];
+	private key: string;
 
-	public notification: NotificationInterest = new NotificationInterest();
+	public notificationInterest: NotificationInterest;
 
 	constructor(key: string) {
 		this.key = key;
-	}
-
-	public startReceivingNotifications(): void {
-		this.shouldPostNotifications = true;
-		this.postNotifications();
-	}
-
-	public pauseReceivingNotifications(): void {
-		this.shouldPostNotifications = false;
+		this.notificationInterest = new NotificationInterest(this);
 	}
 
 	public sendNotification(notification: Notification): void {
 		switch(notification.type) {
 			case NotificationType.standard:
-				this.standard.unshift(notification);
+				//this.standard.unshift(notification);
+				this.notifications.unshift(notification);
 				break;
 
 			case NotificationType.priority:
-				this.priority.unshift(notification);
+				//this.priority.unshift(notification);
+				this.notifications.push(notification);
 				break;
 
 			case NotificationType.urgent:
-				this.notification.post(notification.name).call(this, notification);
+				this.notificationInterest.post(notification);
 				break;
 		}
 
@@ -45,29 +39,22 @@ export class Subscriber {
 		return this.key;
 	}
 
-	public destroy(): void {
-		delete this.standard;
-		delete this.priority;
-	}
+	// public destroy(): void {
+	// 	// delete this.standard;
+	// 	// delete this.priority;
+	// }
+
+	// private postNotifications(): void {
+	// 	this.process(this.priority);
+	// 	this.process(this.standard);
+	// }
 
 	private postNotifications(): void {
-		if (!this.shouldPostNotifications) {
-			return;
-		}
-
-		this.process(this.priority);
-		this.process(this.standard);
-	}
-
-	private process(queue: Notification[]): void {
-		let i = queue.length;
+		let i = this.notifications.length;
 
 		while (i--) {
-			let bundle: Notification = <Notification> queue.shift();
-
-			if (this.notification.has(bundle.name)) {
-				this.notification.post(bundle.name).call(this, bundle);
-			}
+			let notification: Notification = <Notification> this.notifications.shift();
+			this.notificationInterest.post(notification);
 		}
 	}
 }
