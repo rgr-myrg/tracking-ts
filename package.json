@@ -1,0 +1,51 @@
+{
+  "name": "tracking-ts",
+  "version": "0.0.1",
+  "description": "Tracking Analytics",
+  "main": "index.ts",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jasmine-ts \"src/main/test/**/**.ts\"",
+    "coverage": "nyc -e .ts -x \"./src/main/test/**/*.ts\" jasmine-ts \"./src/main/test/**/*.ts\"",
+    "bundle": "tsc --module amd --outFile build/bundle.js src/main/ts/index.ts",
+    "webpack": "webpack --mode development --config webpack.config.js",
+    "uglify": "uglifyjs --compress --mangle --output build/bundle.min.js -- build/bundle.js",
+    "package": "npm run coverage && npm run webpack && npm run uglify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rgr-myrg/tracking-ts.git"
+  },
+  "keywords": [
+    "typescript",
+    "signal",
+    "event",
+    "emitter"
+  ],
+  "author": "CBSi VTG",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rgr-myrg/tracking-ts/issues"
+  },
+  "homepage": "https://github.com/rgr-myrg/tracking-ts#readme",
+  "dependencies": {
+    "@types/node": "^9.6.0",
+    "types": "^0.1.1",
+    "typescript": "^2.7.1"
+  },
+  "devDependencies": {
+    "@types/es6-collections": "^0.5.31",
+    "@types/jasmine": "^2.8.6",
+    "awesome-typescript-loader": "^4.0.1",
+    "jasmine-spec-reporter": "^4.2.1",
+    "jasmine-ts": "^0.2.1",
+    "nyc": "^11.6.0",
+    "source-map-loader": "^0.2.3",
+    "ts-loader": "^4.1.0",
+    "ts-node": "^4.1.0",
+    "uglify-js": "^3.3.16",
+    "webpack": "^4.2.0",
+    "webpack-cli": "^2.0.13"
+  }
+}
