@@ -9,7 +9,7 @@ export class NotificationInterest {
 		this.subscriber = subscriber;
 	}
 
-	public subscribe(list: Interests[]):void {
+	public subscribe(list: Interest[]):void {
 		for (let item of list) {
 			this.interests.set(item.on, item.callback);
 		}
@@ -36,7 +36,7 @@ export class NotificationInterest {
 	}
 }
 
-export interface Interests {
+export interface Interest {
 	on: string;
 	callback: Function;
 }
