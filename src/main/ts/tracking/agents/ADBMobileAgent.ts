@@ -1,5 +1,5 @@
 import {Subscriber} from "../notifier/Subscriber";
-import {Event} from "../event/Event";
+import {Event} from "../notifier/Event";
 
 export class ADBMobileAgent extends Subscriber {
     public static NAME: string = "ADBMobileAgent";
@@ -7,9 +7,7 @@ export class ADBMobileAgent extends Subscriber {
     constructor() {
         super(ADBMobileAgent.NAME);
 
-        this.notificationInterest.subscribe([
-            {on: Event.LOADED_METADATA, callback: this.onLoadedMetadata}
-        ]);
+        this.on(Event.LOADED_METADATA, this.onLoadedMetadata);
     }
 
     public onLoadedMetadata(data: any) {

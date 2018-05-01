@@ -6,7 +6,7 @@
 
 import {Notifier} from "./tracking/notifier/Notifier";
 import {Subscriber} from "./tracking/notifier/Subscriber";
-import {Event} from "./tracking/event/Event";
+import {Event} from "./tracking/notifier/Event";
 import {ADBMobileAgent} from "./tracking/agents/ADBMobileAgent";
 
 export class Tracking extends Notifier {

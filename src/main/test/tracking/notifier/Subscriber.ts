@@ -1,6 +1,7 @@
 import {Subscriber} from "../../../ts/tracking/notifier/Subscriber";
 import {Notification} from "../../../ts/tracking/notifier/Notification";
 import {NotificationType} from "../../../ts/tracking/notifier/NotificationType";
+import {Event} from "../../../ts/tracking/notifier/Event";
 
 describe("Subscriber Tests", () => {
 	let onReceiveSpy: any;
@@ -20,11 +21,12 @@ describe("Subscriber Tests", () => {
 		constructor() {
 			super(MockSubscriber.NAME);
 
-			this.notificationInterest.subscribe([
-				{on: "receive", callback: this.onReceive},
-				{on: "priority", callback: this.onPriority},
-				{on: "urgent", callback: this.onUrgent}
-			]);
+			this.on(Event.LOADED_METADATA, this.onReceive);
+			// this.notificationInterest.subscribe([
+			// 	{on: "receive", callback: this.onReceive},
+			// 	{on: "priority", callback: this.onPriority},
+			// 	{on: "urgent", callback: this.onUrgent}
+			// ]);
 		}
 		public onReceive(notification: Notification): void {
 			delegate.onReceive(notification);
@@ -41,7 +43,7 @@ describe("Subscriber Tests", () => {
 		subscriber = new MockSubscriber();
 
 		notification = {
-			name: "receive",
+			name: Event.LOADED_METADATA,
 			body: {data: 555},
 			type: NotificationType.standard
 		};
@@ -97,31 +99,31 @@ describe("Subscriber Tests", () => {
 	// 	expect(delegate.onPriority).toHaveBeenCalledBefore(onReceiveSpy);
 	// });
 
-	it("unsubscribe should delete the callback", () => {
+	it("off() should delete the callback", () => {
 		//subscriber.startReceivingNotifications();
 
-		subscriber.notificationInterest.unsubscribe("receive");
-		subscriber.sendNotification({
-			name: "receive",
+		subscriber.off(Event.LOADED_METADATA);
+
+		subscriber.post({
+			name: Event.LOADED_METADATA,
 			body: {},
 			type: NotificationType.standard
 		});
 
-		expect(subscriber.notificationInterest.has("receive")).toBe(false);
+		//expect(subscriber.notificationInterest.has("receive")).toBe(false);
 		expect(delegate.onReceive).toHaveBeenCalledTimes(0);
 	});
 
-	it("subscribe should add the callback", () => {
+	it("on() should add the callback", () => {
 		//subscriber.startReceivingNotifications();
 
-		subscriber.notificationInterest.subscribe([{on: "receive", callback: subscriber.onReceive}]);
-		subscriber.sendNotification({
-			name: "receive",
+		subscriber.on(Event.LOADED_METADATA, subscriber.onReceive);
+		subscriber.post({
+			name: Event.LOADED_METADATA,
 			body: {},
 			type: NotificationType.standard
 		});
 
-		expect(subscriber.notificationInterest.has("receive")).toBe(true);
 		expect(delegate.onReceive).toHaveBeenCalledTimes(1);
 	});
 

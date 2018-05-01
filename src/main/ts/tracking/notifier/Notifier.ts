@@ -1,6 +1,7 @@
 import {Notification} from "./Notification";
 import {NotificationType} from "./NotificationType";
 import {Subscriber} from "./Subscriber";
+import {Event} from "./Event";
 
 export class Notifier {
 	private subscribers: Map<string, Subscriber> = new Map();
@@ -17,18 +18,18 @@ export class Notifier {
 		return this.subscribers.get(key);
 	}
 
-	public notify(eventName: string, eventData: any): void {
-		this.sendNotification(eventName, eventData, NotificationType.standard);
+	public notify(event: Event, data: any): void {
+		this.sendNotification(event, data, NotificationType.standard);
 	}
 
-	public notifyPriority(eventName: string, eventData: any): void {
-		this.sendNotification(eventName, eventData, NotificationType.priority);
+	public notifyPriority(event: Event, data: any): void {
+		this.sendNotification(event, data, NotificationType.priority);
 	}
 
-	private sendNotification(name: string, data: any, type: NotificationType): void {
+	private sendNotification(event: Event, data: any, type: NotificationType): void {
 		this.subscribers.forEach(subscriber => {
-			subscriber.sendNotification({
-				name: name,
+			subscriber.post({
+				name: event,
 				body: data,
 				type: type
 			});

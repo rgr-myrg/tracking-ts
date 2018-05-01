@@ -1,24 +1,25 @@
 import {Notifier} from "../../../ts/tracking/notifier/Notifier";
 import {Subscriber} from "../../../ts/tracking/notifier/Subscriber";
+import  {Event} from "../../../ts/tracking/notifier/Event";
 
 describe("Notifier Tests", () => {
 	let notifier: Notifier;
 	let subscriber: Subscriber;
+	let message: string;
 	let subscriberSpy: any;
 
 	beforeEach(() => {
 		notifier = new Notifier();
 		subscriber = new Subscriber("SubscriberKey");
-		subscriberSpy = spyOn(subscriber, "sendNotification").and.callThrough();
+
+		subscriber.on(Event.LOADED_METADATA, (data: string) => {
+			message = data;
+		});
+
+		subscriberSpy = spyOn(subscriber, "post").and.callThrough();
 	});
 
-	// it("addReceiver should register a Receiver", () => {
-	// 	notifier.add(subscriber);
-	//
-	// 	expect(notifier.getSubscriberCount()).toEqual(1);
-	// });
-
-	it("getReceiver should return the Receiver", () => {
+	it("get() should return the Receiver", () => {
 		notifier.add(subscriber);
 
 		let registered: Subscriber | undefined = notifier.get("SubscriberKey");
@@ -26,7 +27,7 @@ describe("Notifier Tests", () => {
 		expect(registered).toEqual(subscriber);
 	});
 
-	it("removeReceiver should remove the Receiver", () => {
+	it("delete() should remove the Receiver", () => {
 		notifier.add(subscriber);
 
 		let removed: boolean = notifier.delete("SubscriberKey");
@@ -34,18 +35,19 @@ describe("Notifier Tests", () => {
 		expect(removed).toEqual(true);
 	});
 
-	it("notify should send the notification", () => {
+	it("post() should send the notification", () => {
 		notifier.add(subscriber);
-		notifier.notify("send", {data: "test"});
+		notifier.notify(Event.LOADED_METADATA, "test");
 
-		expect(subscriber.sendNotification).toHaveBeenCalledTimes(1);
+		expect(subscriber.post).toHaveBeenCalledTimes(1);
+		expect(message).toEqual("test");
 	});
 
 	it("notifyPriority should send the priority notification", () => {
 		notifier.add(subscriber);
-		notifier.notifyPriority("send", {data: "test"});
+		notifier.notifyPriority(Event.LOADED_METADATA, {data: "test"});
 
-		expect(subscriber.sendNotification).toHaveBeenCalledTimes(1);
+		expect(subscriber.post).toHaveBeenCalledTimes(1);
 	});
 
 	// it("notifyUrgent should send the urgent notification", () => {

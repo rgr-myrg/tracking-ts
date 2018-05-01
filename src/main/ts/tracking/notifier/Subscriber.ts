@@ -1,19 +1,29 @@
 import {Notification} from "./Notification";
 import {NotificationType} from "./NotificationType";
-import {NotificationInterest} from "./NotificationInterest";
+import {Event} from "./Event";
 
 export class Subscriber {
 	private notifications: Notification[] = [];
+	private interests: Map<Event, Function> = new Map();
 	private key: string;
-
-	public notificationInterest: NotificationInterest;
 
 	constructor(key: string) {
 		this.key = key;
-		this.notificationInterest = new NotificationInterest(this);
 	}
 
-	public sendNotification(notification: Notification): void {
+	public on(key: Event, callback: Function): void {
+		this.interests.set(key, callback);
+	}
+
+	public off(key: Event): boolean {
+		return this.interests.delete(key);
+	}
+
+	public getKey(): string {
+		return this.key;
+	}
+
+	public post(notification: Notification): void {
 		switch(notification.type) {
 			case NotificationType.standard:
 				this.notifications.unshift(notification);
@@ -27,15 +37,16 @@ export class Subscriber {
 		this.postNotifications();
 	}
 
-	public getKey(): string {
-		return this.key;
-	}
-
 	private postNotifications(): void {
 		let i = this.notifications.length;
 
 		while (i--) {
-			this.notificationInterest.post(<Notification> this.notifications.shift());
+			let notification: Notification = this.notifications[i];
+			let callback: Function = <Function> this.interests.get(notification.name);
+
+			if (callback) {
+				callback.call(this, notification.body);
+			}
 		}
 	}
 }
