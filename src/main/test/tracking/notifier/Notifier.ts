@@ -1,4 +1,5 @@
 import {Notifier} from "../../../ts/tracking/notifier/Notifier";
+import {Notification} from "../../../ts/tracking/notifier/Notification";
 import {Subscriber} from "../../../ts/tracking/notifier/Subscriber";
 import  {Event} from "../../../ts/tracking/notifier/Event";
 
@@ -12,9 +13,11 @@ describe("Notifier Tests", () => {
 		notifier = new Notifier();
 		subscriber = new Subscriber("SubscriberKey");
 
-		subscriber.on(Event.LOADED_METADATA, (data: string) => {
-			message = data;
+		subscriber.on(Event.LOADED_METADATA, (notification: Notification) => {
+			message = notification.body;
 		});
+
+		subscriber.startReceivingNotifications();
 
 		subscriberSpy = spyOn(subscriber, "post").and.callThrough();
 	});

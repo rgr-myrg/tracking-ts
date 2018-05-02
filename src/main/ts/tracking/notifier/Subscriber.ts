@@ -3,34 +3,45 @@ import {NotificationType} from "./NotificationType";
 import {Event} from "./Event";
 
 export class Subscriber {
-	private notifications: Notification[] = [];
+	private queue: Notification[] = [];
+
 	private interests: Map<Event, Function> = new Map();
 	private key: string;
+	private shouldPost: boolean = false;
 
 	constructor(key: string) {
 		this.key = key;
 	}
 
-	public on(key: Event, callback: Function): void {
-		this.interests.set(key, callback);
+	public on(event: Event, callback: Function): void {
+		this.interests.set(event, callback);
 	}
 
-	public off(key: Event): boolean {
-		return this.interests.delete(key);
+	public off(event: Event): boolean {
+		return this.interests.delete(event);
 	}
 
 	public getKey(): string {
 		return this.key;
 	}
 
+	public startReceivingNotifications(): void {
+		this.shouldPost = true;
+		this.postNotifications();
+	}
+
+	public pauseReceivingNotifications(): void {
+		this.shouldPost = false;
+	}
+
 	public post(notification: Notification): void {
 		switch(notification.type) {
 			case NotificationType.standard:
-				this.notifications.unshift(notification);
+				this.queue.unshift(notification);
 				break;
 
 			case NotificationType.priority:
-				this.notifications.push(notification);
+				this.queue.push(notification);
 				break;
 		}
 
@@ -38,14 +49,18 @@ export class Subscriber {
 	}
 
 	private postNotifications(): void {
-		let i = this.notifications.length;
+		if (!this.shouldPost) {
+			return;
+		}
+
+		let i = this.queue.length;
 
 		while (i--) {
-			let notification: Notification = this.notifications[i];
+			let notification: Notification = this.queue[i];
 			let callback: Function = <Function> this.interests.get(notification.name);
 
 			if (callback) {
-				callback.call(this, notification.body);
+				callback.call(this, notification);
 			}
 		}
 	}
