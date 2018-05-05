@@ -7,8 +7,8 @@ export class ADBMobileAgent extends PubSub.Subscriber {
     constructor() {
         super(ADBMobileAgent.NAME);
 
-        this.on(Event.LOADED_METADATA, this.onLoadedMetadata);
-        this.start();
+        // this.on(Event.LOADED_METADATA, this.onLoadedMetadata);
+        // this.start();
     }
 
     public onLoadedMetadata(data: any) {
