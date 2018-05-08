@@ -3,13 +3,13 @@ import {Event} from '../event/Event';
 import {Model} from '../model/Model';
 
 export class MuxAgent extends PubSub.Subscriber {
-    public static NAME: string = 'MuxQOSPluginJS';
+    public static KEY: string = 'MuxQOSPluginJS';
 
     public config: Model.TrackingConfig;
     public videoElement: HTMLElement | undefined;
 
     constructor(config: Model.TrackingConfig) {
-        super(MuxAgent.NAME);
+        super(MuxAgent.KEY);
 
         this.config = config;
 

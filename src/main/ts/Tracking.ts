@@ -33,7 +33,7 @@ export class Tracking extends PubSub.Publisher {
         }
 
         switch (config.name) {
-            case MuxAgent.NAME:
+            case MuxAgent.KEY:
                 this.add(new MuxAgent(config));
                 break;
         }
