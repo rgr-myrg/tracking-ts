@@ -18,11 +18,15 @@ export class MuxAgent extends PubSub.Subscriber {
         this.start();
     }
 
-    public onPlayerLoaded(videoElement: HTMLElement): void {
+    public onPlayerLoaded(notification: PubSub.Notification): void {
+        let videoElement: HTMLElement = notification.body;
+
         this.videoElement = videoElement;
     }
 
-    public onContentDataLoaded(data: Model.ContentData):void {
+    public onContentDataLoaded(notification: PubSub.Notification):void {
+        let data: Model.ContentData = notification.body;
+
         if ((window as any).mux) {
             (window as any).mux.monitor(this.videoElement, {
                 debug: true,
